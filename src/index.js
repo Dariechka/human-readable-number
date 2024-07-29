@@ -1,4 +1,6 @@
 module.exports = function toReadable (number) {
+  let result = [];
+
   function match10(n) {
     switch(n) {
         case 0: return 'zero';
@@ -28,5 +30,40 @@ module.exports = function toReadable (number) {
     }
   }
 
-  
+  if (number%100 >= 10 && number%100 < 20){
+    result.push(match20(number%100));
+  }
+    const units = match10(number%10);
+    result.push(units);
+
+    const tenthsNumber = number%100;
+    if (Math.floor(tenthsNumber/10) === 0) {
+      return result.join(' ');
+    } else {
+    const tenths = match10(Math.floor(tenthsNumber/10)) + 'ty';
+    result.unshift(tenths);
+    }
+
+    const hundredthsNumber = number%1000;
+    if (Math.floor(hundredthsNumber/100) === 0) {
+      return result.join(' ');
+    } else {
+    const hundredths = match10(Math.floor(hundredthsNumber/100)) + ' hundred';
+    result.unshift(hundredths);
+    }
+
+    const thousandthsNumbers = number%10000;
+    if (Math.floor(thousandthsNumbers/1000) === 0) {
+      return result.join(' ');
+    } else {
+    let thousandths;
+    if (Math.floor(thousandthsNumbers/1000) === 1){
+      thousandths = match10(Math.floor(thousandthsNumbers/1000)) + ' thousand';
+    } else {
+      thousandths = match10(Math.floor(thousandthsNumbers/1000)) + ' thousands';
+    }
+    result.unshift(thousandths);
+  }
+
+  return result.join(' ');
 }
