@@ -1,7 +1,7 @@
-module.exports = function toReadable (number) {
+module.exports = function toReadable(number) {
   let result = [];
 
-  function match10(n) {
+  function match(n) {
     switch(n) {
         case 0: return 'zero';
         case 1: return 'one';
@@ -15,55 +15,53 @@ module.exports = function toReadable (number) {
         case 9: return 'nine';
     }
   }
-  function match20(n) {
+
+  function matchTenths(n) {
     switch(n) {
-        case 10: return 'ten';
-        case 11: return 'eleven';
-        case 12: return 'twelve';
-        case 13: return 'thirteen';
-        case 14: return 'fourteen';
-        case 15: return 'fifteen';
-        case 16: return 'sixteen';
-        case 17: return 'seventeen';
-        case 18: return 'eightteen';
-        case 19: return 'nineteen';
+        case 0: return 'zero';
+        case 3: return 'thirt';
+        case 4: return 'fourt';
+        case 5: return 'fift';
+        case 6: return 'sixt';
+        case 7: return 'sevent';
+        case 8: return 'eight';
+        case 9: return 'ninet';
     }
   }
 
-  if (number%100 >= 10 && number%100 < 20){
-    result.push(match20(number%100));
+  if (number === 0) return 'zero';
+  if (Math.floor(number%100/10) === 1){
+    if (number%10 === 0){
+      result.push('ten');
+    } else if (number%10 === 1) {
+      result.push('eleven');
+    } else if (number%10 === 2) {
+      result.push('twelve');
+    } else {
+      result.push(matchTenths(number%10) + 'een');
+    }
+  } else {
+    const units = match(number%10);
+    if (units !== 'zero') {
+      result.push(units);
+    }
+    if (Math.floor(number%100/10) === 2) {
+      result.unshift('twenty');
+    } else {
+      const tenths = matchTenths(Math.floor(number%100/10));
+      if (tenths !== 'zero') {
+        result.unshift(tenths + 'y');
+      }
+    }
   }
-    const units = match10(number%10);
-    result.push(units);
 
-    const tenthsNumber = number%100;
-    if (Math.floor(tenthsNumber/10) === 0) {
-      return result.join(' ');
-    } else {
-    const tenths = match10(Math.floor(tenthsNumber/10)) + 'ty';
-    result.unshift(tenths);
-    }
-
-    const hundredthsNumber = number%1000;
-    if (Math.floor(hundredthsNumber/100) === 0) {
-      return result.join(' ');
-    } else {
-    const hundredths = match10(Math.floor(hundredthsNumber/100)) + ' hundred';
-    result.unshift(hundredths);
-    }
-
-    const thousandthsNumbers = number%10000;
-    if (Math.floor(thousandthsNumbers/1000) === 0) {
-      return result.join(' ');
-    } else {
-    let thousandths;
-    if (Math.floor(thousandthsNumbers/1000) === 1){
-      thousandths = match10(Math.floor(thousandthsNumbers/1000)) + ' thousand';
-    } else {
-      thousandths = match10(Math.floor(thousandthsNumbers/1000)) + ' thousands';
-    }
-    result.unshift(thousandths);
+  const hundredths = match(Math.floor(number/ 100));
+  if (hundredths !== 'zero'){
+    result.unshift(hundredths + ' hundred');
   }
+
+  result = result.filter(item => item !== 'undefinedy')
+  .map(item => (item === 'fourty') ? 'forty' : item);
 
   return result.join(' ');
 }
